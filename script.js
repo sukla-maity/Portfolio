@@ -1,0 +1,21 @@
+const $=(s,p=document)=>p.querySelector(s), $$=(s,p=document)=>[...p.querySelectorAll(s)];
+const loader=$('#loader');
+window.addEventListener('load',()=>setTimeout(()=>loader.classList.add('hide'),450));
+const header=$('#header'), progress=$('#progress');
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement.scrollHeight-innerHeight;
+  progress.style.width=`${h>0?(scrollY/h)*100:0}%`;
+  header.classList.toggle('scrolled',scrollY>12);
+  const ids=['home','about','experience','projects','skills','contact'];
+  let current='home';
+  ids.forEach(id=>{const el=document.getElementById(id);if(el&&scrollY>=el.offsetTop-180)current=id});
+  $$('.nav-link').forEach(a=>a.classList.toggle('active',a.getAttribute('href')===`#${current}`));
+});
+const menu=$('#navMenu'), toggle=$('#menuToggle');
+toggle.addEventListener('click',()=>{const open=menu.classList.toggle('open');toggle.setAttribute('aria-expanded',open);toggle.innerHTML=open?'<i class="ri-close-line"></i>':'<i class="ri-menu-4-line"></i>'});
+$$('.nav-link,.nav-cta').forEach(a=>a.addEventListener('click',()=>{menu.classList.remove('open');toggle.setAttribute('aria-expanded','false');toggle.innerHTML='<i class="ri-menu-4-line"></i>'}));
+const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.12});
+$$('.reveal').forEach(el=>observer.observe(el));
+$('#year').textContent=new Date().getFullYear();
+$('#contactForm').addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.currentTarget);const subject=encodeURIComponent(`Portfolio enquiry from ${f.get('name')}`);const body=encodeURIComponent(`Name: ${f.get('name')}\nEmail: ${f.get('email')}\n\n${f.get('message')}`);window.location.href=`mailto:suklamaity100@gmail.com?subject=${subject}&body=${body}`;$('#formNote').textContent='Opening your email application…'});
+window.dispatchEvent(new Event('scroll'));
